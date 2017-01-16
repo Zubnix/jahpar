@@ -1,0 +1,163 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.freedesktop</groupId>
+    <artifactId>jahpar</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>Java Header Parser library</name>
+
+    <description>Jahpar parses C header files and generates bindings using Jaccall.</description>
+    <url>https://github.com/zubnix/jahpar</url>
+
+    <developers>
+        <developer>
+            <id>Zubnix</id>
+            <name>Erik De Rijcke</name>
+            <email>DeRijcke.Erik@gmail.com</email>
+            <timezone>gmt+1</timezone>
+            <roles>
+                <role>Creator</role>
+                <role>Owner</role>
+                <role>Maintainer</role>
+            </roles>
+        </developer>
+    </developers>
+
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+    <scm>
+        <url>https://github.com/zubnix/jahpar</url>
+        <connection>scm:git:git://github.com/zubnix/jahpar.git</connection>
+        <developerConnection>scm:git:git@github.com:jahpar/jaccall.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+    <properties>
+        <!-- dependencies -->
+        <jaccall.version>1.0.5</jaccall.version>
+        <jcpp.version>1.4.12</jcpp.version>
+
+        <javapoet.version>1.8.0</javapoet.version>
+        <auto-service.version>1.0-rc2</auto-service.version>
+        <auto-common.version>0.8</auto-common.version>
+        <compile-testing.version>0.10</compile-testing.version>
+        <junit.version>4.12</junit.version>
+
+        <!-- plugins -->
+        <maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.freedesktop</groupId>
+            <artifactId>jaccall.runtime</artifactId>
+            <version>${jaccall.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.anarres</groupId>
+            <artifactId>jcpp</artifactId>
+            <version>${jcpp.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.auto</groupId>
+            <artifactId>auto-common</artifactId>
+            <version>${auto-common.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup</groupId>
+            <artifactId>javapoet</artifactId>
+            <version>${javapoet.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service</artifactId>
+            <version>${auto-service.version}</version>
+            <optional>true</optional>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.testing.compile</groupId>
+            <artifactId>compile-testing</artifactId>
+            <version>${compile-testing.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>disable-java8-doclint</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <additionalparam>-Xdoclint:none</additionalparam>
+            </properties>
+        </profile>
+        <profile>
+            <id>release</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
