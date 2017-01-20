@@ -3,8 +3,8 @@ package org.freedesktop.jahpar;
 
 import com.google.auto.common.BasicAnnotationProcessor;
 import com.google.common.collect.SetMultimap;
-import org.anarres.cpp.CppReader;
 import org.anarres.cpp.LexerException;
+import org.anarres.cpp.Macro;
 import org.anarres.cpp.Preprocessor;
 import org.anarres.cpp.Token;
 import org.freedesktop.jahpar.api.Headers;
@@ -138,8 +138,21 @@ public class HeaderParsingProcessingStep implements BasicAnnotationProcessor.Pro
                              final String lib,
                              final int version) throws IOException, LexerException {
         try (Preprocessor preprocessor = new Preprocessor(new File(include))) {
-            final Token token = preprocessor.token();
-            //TODO how to use jcpp?
+            //TODO run preprocessor and generate to-be-processed header file.
+
+            //TODO how to handle typedef function pointers?
+
+            final Map<String, Macro> macros = preprocessor.getMacros();
+            macros.values()
+                  .forEach(macro -> {
+                      if (!macro.isFunctionLike()) {
+                          final String macroName = macro.getName();
+                          final String macroText = macro.getText();
+                          //TODO write out constant
+                      }
+                  });
+
+            //TODO use javacc to write out structs/unions/functions
         }
     }
 }
