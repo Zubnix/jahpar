@@ -27,6 +27,12 @@
     <dependencies>
         <dependency>
             <groupId>org.freedesktop</groupId>
+            <artifactId>jahpar.javacc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.freedesktop</groupId>
             <artifactId>jaccall.runtime</artifactId>
             <version>${jaccall.version}</version>
         </dependency>
