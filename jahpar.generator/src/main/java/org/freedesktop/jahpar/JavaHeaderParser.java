@@ -8,6 +8,7 @@ import javax.annotation.processing.Processor;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import java.util.Collections;
 
 @AutoService(Processor.class)
 @SupportedAnnotationTypes({"org.freedesktop.jahpar.api.Headers"})
@@ -15,6 +16,6 @@ import javax.lang.model.SourceVersion;
 public class JavaHeaderParser extends BasicAnnotationProcessor {
     @Override
     protected Iterable<? extends ProcessingStep> initSteps() {
-        return null;
+        return Collections.singleton(new HeaderParsingProcessingStep(this.processingEnv));
     }
 }

@@ -14,7 +14,7 @@
 
     <properties>
         <!-- dependencies -->
-        <jcpp.version>1.4.12</jcpp.version>
+        <javacc.version>7.0.1</javacc.version>
 
         <javapoet.version>1.8.0</javapoet.version>
         <auto-service.version>1.0-rc2</auto-service.version>
@@ -26,9 +26,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.anarres</groupId>
-            <artifactId>jcpp</artifactId>
-            <version>${jcpp.version}</version>
+            <groupId>net.java.dev.javacc</groupId>
+            <artifactId>javacc</artifactId>
+            <version>${javacc.version}</version>
         </dependency>
 
         <dependency>
