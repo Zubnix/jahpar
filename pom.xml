@@ -50,7 +50,6 @@
     </distributionManagement>
 
     <modules>
-        <module>jahpar.javacc</module>
         <module>jahpar.generator</module>
     </modules>
 

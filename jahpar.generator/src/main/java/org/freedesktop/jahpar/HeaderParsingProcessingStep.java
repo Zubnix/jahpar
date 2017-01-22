@@ -3,10 +3,13 @@ package org.freedesktop.jahpar;
 
 import com.google.auto.common.BasicAnnotationProcessor;
 import com.google.common.collect.SetMultimap;
+import org.anarres.cpp.CppReader;
 import org.anarres.cpp.LexerException;
 import org.anarres.cpp.Macro;
 import org.anarres.cpp.Preprocessor;
-import org.anarres.cpp.Token;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.freedesktop.jahpar.api.Headers;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -82,7 +85,7 @@ public class HeaderParsingProcessingStep implements BasicAnnotationProcessor.Pro
                                                                                                                                                                                  null);//get @Header
                                                                                                         protocolAnnotationMirror.getElementValues();
 
-                                                                                                        String include = null;
+                                                                                                        String header  = null;
                                                                                                         String lib     = null;
                                                                                                         int    version = 0;
 
@@ -90,10 +93,10 @@ public class HeaderParsingProcessingStep implements BasicAnnotationProcessor.Pro
                                                                                                                                                                                                                .entrySet()) {
                                                                                                             if (entry.getKey()
                                                                                                                      .getSimpleName()
-                                                                                                                     .contentEquals("include")) {//get @Header.include()
-                                                                                                                include = entry.getValue()
-                                                                                                                               .getValue()
-                                                                                                                               .toString();
+                                                                                                                     .contentEquals("value")) {//get @Header.value()
+                                                                                                                header = entry.getValue()
+                                                                                                                              .getValue()
+                                                                                                                              .toString();
                                                                                                             }
                                                                                                             else if (entry.getKey()
                                                                                                                           .getSimpleName()
@@ -112,15 +115,15 @@ public class HeaderParsingProcessingStep implements BasicAnnotationProcessor.Pro
                                                                                                         }
 
                                                                                                         try {
-                                                                                                            parseHeader(include,
-                                                                                                                        lib,
-                                                                                                                        version);
+                                                                                                            parse(header,
+                                                                                                                  lib,
+                                                                                                                  version);
                                                                                                         }
-                                                                                                        catch (IOException | LexerException e) {
+                                                                                                        catch (IOException e) {
                                                                                                             this.processingEnv.getMessager()
                                                                                                                               .printMessage(Diagnostic.Kind.ERROR,
-                                                                                                                                            String.format("Failed to parse header. include=%s, lib=%s, version=%d",
-                                                                                                                                                          include,
+                                                                                                                                            String.format("Failed to parse header. header=%s, lib=%s, version=%d",
+                                                                                                                                                          header,
                                                                                                                                                           lib,
                                                                                                                                                           version),
                                                                                                                                             element);
@@ -134,14 +137,25 @@ public class HeaderParsingProcessingStep implements BasicAnnotationProcessor.Pro
         return Collections.emptySet();
     }
 
-    private void parseHeader(final String include,
-                             final String lib,
-                             final int version) throws IOException, LexerException {
-        try (Preprocessor preprocessor = new Preprocessor(new File(include))) {
+    private void parse(final String header,
+                       final String lib,
+                       final int version) throws IOException {
+        try (Preprocessor preprocessor = new Preprocessor(new File(header))) {
             //TODO run preprocessor and generate to-be-processed header file.
+            org.freedesktop.jahpar.CParser parser = new org.freedesktop.jahpar.CParser(
+                    new CommonTokenStream(
+                            new org.freedesktop.jahpar.CLexer(
+                                    new ANTLRInputStream(new CppReader(preprocessor)))));
+
+            // Use ANTLR to do whatever you want...
+            parser.setBuildParseTree(true);
+
+            //TODO gather function and struct (and union) definitions
+            org.freedesktop.jahpar.CListener listener = new CWalker();
+            ParseTreeWalker.DEFAULT.walk(listener,
+                                         parser.compilationUnit());
 
             //TODO how to handle typedef function pointers?
-
             final Map<String, Macro> macros = preprocessor.getMacros();
             macros.values()
                   .forEach(macro -> {
@@ -152,7 +166,6 @@ public class HeaderParsingProcessingStep implements BasicAnnotationProcessor.Pro
                       }
                   });
 
-            //TODO use javacc to write out structs/unions/functions
         }
     }
 }

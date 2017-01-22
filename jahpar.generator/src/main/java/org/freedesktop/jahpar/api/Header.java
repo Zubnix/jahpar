@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.PACKAGE)
 @Retention(RetentionPolicy.SOURCE)
 public @interface Header {
-    String include();
+    String value();
 
     String lib();
 

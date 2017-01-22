@@ -27,16 +27,15 @@
     <dependencies>
         <dependency>
             <groupId>org.freedesktop</groupId>
-            <artifactId>jahpar.javacc</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.freedesktop</groupId>
             <artifactId>jaccall.runtime</artifactId>
             <version>${jaccall.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+            <version>4.6</version>
+        </dependency>
         <dependency>
             <groupId>org.anarres</groupId>
             <artifactId>jcpp</artifactId>
@@ -73,6 +72,25 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>4.5</version>
+                <executions>
+                    <execution>
+                        <id>antlr</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
     <profiles>
         <profile>
